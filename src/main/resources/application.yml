@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/dataJpa?autoReconnect=true&useUnicode=true&characterEncoding=utf-8 # 본인의 db connection url
+    username: root # 본인의 db username
+    password: 0008 # 본인의 db password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database: mysql
+    generate-ddl: true # DDL 생성시 데이터 베이스 고유의 기능을 사용 하는지에 대한 유무
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    hibernate:
+#      ddl-auto: update # // ******** 배포시 무조건 none ******** application 실행시 db에 ddl 생성 및 삭제 옵션
+      ddl-auto: create # // ******** 배포시 무조건 none ******** application 실행시 db에 ddl 생성 및 삭제 옵션
+      default_batch_fetch_size: 500
+
+    properties:
+      hibernate:
+#        show_sql: true # jpa 나 hibernate 를 통해 CRUD 를 실행 하면 해당 CRUD 의 SQL 을 로깅으로 보여 준다.
+        use_sql_comments: true
+        format_sql: true # 로깅에 표시 되는 SQL 을 보기 좋게 표시함
+
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+logging.level:
+  org.hibernate.SQL: debug

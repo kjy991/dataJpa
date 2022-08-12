@@ -36,7 +36,8 @@ public class MemberJpaRepository {
                 .getResultList();
     }
 
-    public long count(){
-        return em.createQuery("select count(fm)")
+    public long count() {
+        return em.createQuery("select count(m) from Member m", Long.class).getSingleResult();
+
     }
 }

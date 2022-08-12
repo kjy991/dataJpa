@@ -10,6 +10,8 @@ import javax.transaction.Transactional;
 
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -34,8 +36,38 @@ class MemberJpaRepositoryTest {
         assertThat(findMember.getUserName()).isEqualTo(member.getUserName());
 
         assertThat(findMember).isEqualTo(member);
+    }
+
+    @Test
+    void basicCRUD(){
+        Member memberA = Member.builder()
+                .userName("memberA")
+                .build();
+        Member memberB = Member.builder()
+                .userName("memberB")
+                .build();
+
+        memberJpaRepository.save(memberA);
+        memberJpaRepository.save(memberB);
+
+        Member findMemberA = memberJpaRepository.findById(memberA.getId()).get();
+        Member findMemberB = memberJpaRepository.findById(memberB.getId()).get();
+        assertThat(findMemberA).isEqualTo(memberA);
+        assertThat(findMemberB).isEqualTo(memberB);
+
+        findMemberA.setUserName("change MemberA");
 
 
+        List<Member> memberList = memberJpaRepository.findAll();
+        assertThat(memberList.size()).isEqualTo(2);
+
+        long count = memberJpaRepository.count();
+        assertThat(count).isEqualTo(2);
+
+        memberJpaRepository.delete(memberA);
+        memberJpaRepository.delete(memberB);
+        long deleteCount = memberJpaRepository.count();
+        assertThat(deleteCount).isEqualTo(0);
 
     }
 

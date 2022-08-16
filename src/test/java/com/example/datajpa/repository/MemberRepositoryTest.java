@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -213,7 +214,7 @@ public class MemberRepositoryTest {
         memberRepository.save(memberA);
         memberRepository.save(memberB);
 
-//        memberRepository
+//         memberRepository
 
 
         List<Member> byNames = memberRepository.findByNames(Arrays.asList("A", "B"));
@@ -237,13 +238,13 @@ public class MemberRepositoryTest {
 
         memberRepository.save(memberA);
         memberRepository.save(memberB);
-//        Optional<Member> a = memberRepository.findOptionalByUsername("A");
-//        assertThat(a).isnot
+//         Optional<Member> a = memberRepository.findOptionalByUsername("A");
+//         assertThat(a).isNot
     }
 
     @Test
     public void paging() {
-        //given
+        // given
         memberRepository.save(new Member("member1", 10));
         memberRepository.save(new Member("member2", 10));
         memberRepository.save(new Member("member3", 10));
@@ -256,20 +257,20 @@ public class MemberRepositoryTest {
 
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.DEFAULT_DIRECTION.DESC, "username"));
 
-        //when
+        // when
         Page<Member> page = memberRepository.findByAge(age, pageRequest);
-//        Slice<Member> page = memberRepository.findByAge(age, pageRequest);
+//         Slice<Member> page = memberRepository.findByAge(age, pageRequest);
 
-        // dto로 꼭 변환 시켜서 api 줘야함 entity로 절대 주지 말것!!
+        //  dto로 꼭 변환 시켜서 api 줘야함 entity 절대 주지 말것!!
         Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
 
 
-        //then
+        // then
         List<Member> content = page.getContent();
 
         assertThat(content.size()).isEqualTo(3L);
         assertThat(page.getTotalElements()).isEqualTo(6L);
-        assertThat(page   .getTotalPages()).isEqualTo(2L);
+        assertThat(page.getTotalPages()).isEqualTo(2L);
         assertThat(page.getNumber()).isEqualTo(0);
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
@@ -277,17 +278,17 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    public void bulkUpdate(){
-        // given
-        memberRepository.save(new Member("member1",10));
-        memberRepository.save(new Member("member2",20));
-        memberRepository.save(new Member("member3",30));
-        memberRepository.save(new Member("member4",40));
-        memberRepository.save(new Member("member5",50));
-        memberRepository.save(new Member("member6",60));
-        memberRepository.save(new Member("member7",70));
+    public void bulkUpdate() {
+        //  given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 20));
+        memberRepository.save(new Member("member3", 30));
+        memberRepository.save(new Member("member4", 40));
+        memberRepository.save(new Member("member5", 50));
+        memberRepository.save(new Member("member6", 60));
+        memberRepository.save(new Member("member7", 70));
 
-        // when
+        //  when
         int resultCount = memberRepository.bulkAgePlus(30);
 
 
@@ -301,10 +302,10 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    public void findMemberLazy(){
-        // given
-        // member1 -> teamA
-        // member2 -> teamB
+    public void findMemberLazy() {
+        //  given
+        //  member1 -> teamA
+        //  member2 -> teamB
 
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
@@ -319,12 +320,40 @@ public class MemberRepositoryTest {
         em.flush();
         em.clear();
 
-        //when
-//        List<Member> memberList = memberRepository.findMemberFetchJoin();
+        // when
+        // List<Member> memberList = memberRepository.findMemberFetchJoin();
         List<Member> memberList = memberRepository.findAll();
         for (Member member : memberList) {
             System.out.println("member = " + member.getTeam().getName());
         }
+    }
+
+    @Test
+    public void queryHint() {
+        // given
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        // when
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("member2");
+
+        em.flush();
+
+    }
+    @Test
+    public void lock() {
+        // given
+        Member member1 = new Member("member1", 10);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        // when
+        List<Member> memberList = memberRepository.findLockByUsername("member1");
+
     }
 }
 

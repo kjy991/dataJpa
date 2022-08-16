@@ -26,11 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @Rollback(value = false)
 public class MemberRepositoryTest {
-
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+    @Autowired
+    MemberQueryRepository memberQueryRepository;
     @PersistenceContext
     EntityManager em;
 
@@ -46,7 +47,6 @@ public class MemberRepositoryTest {
         Assertions.assertThat(saveMember.getId()).isEqualTo(findMember.getId());
         Assertions.assertThat(saveMember.getUsername()).isEqualTo(findMember.getUsername());
         Assertions.assertThat(saveMember).isEqualTo(findMember);
-
     }
 
 
@@ -69,7 +69,6 @@ public class MemberRepositoryTest {
 
         findMemberA.setUsername("change MemberA");
 
-
         List<Member> memberList = memberRepository.findAll();
         assertThat(memberList.size()).isEqualTo(2);
 
@@ -80,7 +79,6 @@ public class MemberRepositoryTest {
         memberRepository.delete(memberB);
         long deleteCount = memberRepository.count();
         assertThat(deleteCount).isEqualTo(0);
-
     }
 
 
@@ -115,8 +113,6 @@ public class MemberRepositoryTest {
         for (Member member : helloBy) {
             System.out.println("member = " + member);
         }
-
-
     }
 
     @Test
@@ -133,7 +129,6 @@ public class MemberRepositoryTest {
 
         memberRepository.save(memberA);
         memberRepository.save(memberB);
-
 
         List<Member> resultList = memberRepository.findUser("A", 10);
         Member findMember = resultList.get(0);
@@ -155,7 +150,6 @@ public class MemberRepositoryTest {
 
         memberRepository.save(memberA);
         memberRepository.save(memberB);
-
 
         List<String> usernameList = memberRepository.findUsernameList();
         for (String s : usernameList) {
@@ -214,9 +208,6 @@ public class MemberRepositoryTest {
         memberRepository.save(memberA);
         memberRepository.save(memberB);
 
-//         memberRepository
-
-
         List<Member> byNames = memberRepository.findByNames(Arrays.asList("A", "B"));
         for (Member byName : byNames) {
             System.out.println("byName = " + byName);
@@ -274,7 +265,6 @@ public class MemberRepositoryTest {
         assertThat(page.getNumber()).isEqualTo(0);
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
-
     }
 
     @Test
@@ -291,12 +281,10 @@ public class MemberRepositoryTest {
         //  when
         int resultCount = memberRepository.bulkAgePlus(30);
 
-
         Member member5 = memberRepository.findByUsername("member5");
         System.out.println("=============================================================================================");
         System.out.println("member5 = " + member5);
         System.out.println("=============================================================================================");
-
 
         assertThat(resultCount).isEqualTo(5);
     }
@@ -341,8 +329,8 @@ public class MemberRepositoryTest {
         findMember.setUsername("member2");
 
         em.flush();
-
     }
+
     @Test
     public void lock() {
         // given
@@ -353,7 +341,12 @@ public class MemberRepositoryTest {
 
         // when
         List<Member> memberList = memberRepository.findLockByUsername("member1");
+    }
 
+    @Test
+    public void callCustom() {
+        List<Member> memberCustom = memberRepository.findMemberCustom();
+        System.out.println("memberCustom = " + memberCustom);
     }
 }
 

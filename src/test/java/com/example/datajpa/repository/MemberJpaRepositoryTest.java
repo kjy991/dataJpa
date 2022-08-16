@@ -22,7 +22,7 @@ class MemberJpaRepositoryTest {
     MemberJpaRepository memberJpaRepository;
 
     @Test
-    void testMember(){
+    void testMember() {
         Member member = Member.builder()
                 .username("김준엽")
                 .build();
@@ -37,7 +37,7 @@ class MemberJpaRepositoryTest {
     }
 
     @Test
-    void basicCRUD(){
+    void basicCRUD() {
         Member memberA = Member.builder()
                 .username("memberA")
                 .build();
@@ -69,7 +69,7 @@ class MemberJpaRepositoryTest {
     }
 
     @Test
-    public void findByUsernameAndAgeGreaterThan(){
+    public void findByUsernameAndAgeGreaterThan() {
         Member memberA = Member.builder()
                 .username("A")
                 .age(10)
@@ -93,6 +93,31 @@ class MemberJpaRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
     }
 
+    @Test
+    public void paging() {
+        //given
+        memberJpaRepository.save(new Member("member1", 10));
+        memberJpaRepository.save(new Member("member2", 10));
+        memberJpaRepository.save(new Member("member3", 10));
+        memberJpaRepository.save(new Member("member4", 10));
+        memberJpaRepository.save(new Member("member5", 10));
+        memberJpaRepository.save(new Member("member6", 10));
+
+        int age = 10;
+        int offset = 0;
+        int limit = 3;
+
+        //when
+        List<Member> members = memberJpaRepository.findByPage(age, offset, limit);
+        long totalCount = memberJpaRepository.totalCount(age);
+
+
+        //then
+        assertThat(members.size()).isEqualTo(3L);
+        assertThat(totalCount).isEqualTo(6L);
+
+
+    }
 
 
 }

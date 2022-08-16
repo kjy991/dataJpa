@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @ToString(of = {"id", "username", "age"})
-public class Member {
+public class Member extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -28,6 +28,10 @@ public class Member {
         this.team = team;
         team.getMembers().add(this);
 
+    }
+
+    public Member(String username) {
+        this.username = username;
     }
 
     public Member(String username, int age) {

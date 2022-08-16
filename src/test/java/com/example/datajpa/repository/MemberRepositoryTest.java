@@ -214,6 +214,29 @@ public class MemberRepositoryTest {
         for (Member byName : byNames) {
             System.out.println("byName = " + byName);
         }
+    }
+
+
+    @Test
+    public void returnType() {
+        Member memberA = Member.builder()
+                .username("A")
+                .age(10)
+                .build();
+
+        Member memberB = Member.builder()
+                .username("B")
+                .age(20)
+                .build();
+
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+
+//        memberRepository
+
+
+        Optional<Member> a = memberRepository.findOptionalByUsername("A");
+
 
     }
 

@@ -8,12 +8,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,7 +101,7 @@ public class MemberRepositoryTest {
 
         assertThat(result.get(0).getUsername()).isEqualTo("A");
         assertThat(result.get(0).getAge()).isEqualTo(20);
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(2);
     }
 
     @Test
@@ -231,15 +233,47 @@ public class MemberRepositoryTest {
 
         memberRepository.save(memberA);
         memberRepository.save(memberB);
+//        Optional<Member> a = memberRepository.findOptionalByUsername("A");
+//        assertThat(a).isnot
+    }
 
-//        memberRepository
+    @Test
+    public void paging() {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 10));
+        memberRepository.save(new Member("member3", 10));
+        memberRepository.save(new Member("member4", 10));
+        memberRepository.save(new Member("member5", 10));
+        memberRepository.save(new Member("member6", 10));
 
 
-        Optional<Member> a = memberRepository.findOptionalByUsername("A");
+        int age = 10;
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.DEFAULT_DIRECTION.DESC, "username"));
+
+        //when
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+//        Slice<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        // dto로 꼭 변환 시켜서 api 줘야함 entity로 절대 주지 말것!!
+        Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+
+
+        //then
+        List<Member> content = page.getContent();
+
+        assertThat(content.size()).isEqualTo(3L);
+        assertThat(page.getTotalElements()).isEqualTo(6L);
+        assertThat(page   .getTotalPages()).isEqualTo(2L);
+        assertThat(page.getNumber()).isEqualTo(0);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
+
+
 
 
     }
-
 
 
 }

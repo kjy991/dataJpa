@@ -8,8 +8,6 @@ import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
 
-import org.assertj.core.api.Assertions;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,14 +24,14 @@ class MemberJpaRepositoryTest {
     @Test
     void testMember(){
         Member member = Member.builder()
-                .userName("김준엽")
+                .username("김준엽")
                 .build();
         Member savedMember = memberJpaRepository.save(member);
 
         Member findMember = memberJpaRepository.find(savedMember.getId());
 
         assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getUserName()).isEqualTo(member.getUserName());
+        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
 
         assertThat(findMember).isEqualTo(member);
     }
@@ -41,10 +39,10 @@ class MemberJpaRepositoryTest {
     @Test
     void basicCRUD(){
         Member memberA = Member.builder()
-                .userName("memberA")
+                .username("memberA")
                 .build();
         Member memberB = Member.builder()
-                .userName("memberB")
+                .username("memberB")
                 .build();
 
         memberJpaRepository.save(memberA);
@@ -55,7 +53,7 @@ class MemberJpaRepositoryTest {
         assertThat(findMemberA).isEqualTo(memberA);
         assertThat(findMemberB).isEqualTo(memberB);
 
-        findMemberA.setUserName("change MemberA");
+        findMemberA.setUsername("change MemberA");
 
 
         List<Member> memberList = memberJpaRepository.findAll();
@@ -68,9 +66,49 @@ class MemberJpaRepositoryTest {
         memberJpaRepository.delete(memberB);
         long deleteCount = memberJpaRepository.count();
         assertThat(deleteCount).isEqualTo(0);
+    }
 
+    @Test
+    public void findByUsernameAndAgeGreaterThan(){
+        Member memberA = Member.builder()
+                .username("A")
+                .age(10)
+                .build();
+
+        Member memberB = Member.builder()
+                .username("A")
+                .age(20)
+                .build();
+
+        memberJpaRepository.save(memberA);
+        memberJpaRepository.save(memberB);
+
+        List<Member> result = memberJpaRepository.findByUsernameAndAgeGreaterThan("A", 15);
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+
+        assertThat(result.get(0).getUsername()).isEqualTo("A");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.size()).isEqualTo(1);
     }
 
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

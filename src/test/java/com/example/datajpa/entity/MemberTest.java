@@ -31,23 +31,23 @@ class MemberTest {
         em.persist(teamB);
 
         Member member1 = Member.builder()
-                .userName("엽킹")
+                .username("엽킹")
                 .age(11)
                 .team(teamB)
                 .build();
         Member member2 = Member.builder()
-                .userName("킹엽")
+                .username("킹엽")
                 .age(22)
                 .team(teamA)
                 .build();
 
         Member member3 = Member.builder()
-                .userName("엽킹3")
+                .username("엽킹3")
                 .age(33)
                 .team(teamB)
                 .build();
         Member member4 = Member.builder()
-                .userName("킹엽4")
+                .username("킹엽4")
                 .age(44)
                 .team(teamA)
                 .build();

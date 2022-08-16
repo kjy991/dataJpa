@@ -25,14 +25,14 @@ public class MemberRepositoryTest {
     @Test
     void testMember() {
         Member member = Member.builder()
-                .userName("김준엽킹")
+                .username("김준엽킹")
                 .build();
 
         Member saveMember = memberRepository.save(member);
         Member findMember = memberRepository.findById(saveMember.getId()).get();
 
         Assertions.assertThat(saveMember.getId()).isEqualTo(findMember.getId());
-        Assertions.assertThat(saveMember.getUserName()).isEqualTo(findMember.getUserName());
+        Assertions.assertThat(saveMember.getUsername()).isEqualTo(findMember.getUsername());
         Assertions.assertThat(saveMember).isEqualTo(findMember);
 
     }
@@ -41,10 +41,10 @@ public class MemberRepositoryTest {
     @Test
     void basicCRUD(){
         Member memberA = Member.builder()
-                .userName("memberA")
+                .username("memberA")
                 .build();
         Member memberB = Member.builder()
-                .userName("memberB")
+                .username("memberB")
                 .build();
 
         memberRepository.save(memberA);
@@ -55,7 +55,7 @@ public class MemberRepositoryTest {
         assertThat(findMemberA).isEqualTo(memberA);
         assertThat(findMemberB).isEqualTo(memberB);
 
-        findMemberA.setUserName("change MemberA");
+        findMemberA.setUsername("change MemberA");
 
 
         List<Member> memberList = memberRepository.findAll();
@@ -68,6 +68,47 @@ public class MemberRepositoryTest {
         memberRepository.delete(memberB);
         long deleteCount = memberRepository.count();
         assertThat(deleteCount).isEqualTo(0);
+
+    }
+
+
+    @Test
+    public void findByUsernameAndAgeGreaterThan(){
+        Member memberA = Member.builder()
+                .username("A")
+                .age(10)
+                .build();
+
+        Member memberB = Member.builder()
+                .username("A")
+                .age(20)
+                .build();
+
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("A", 15);
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+
+        assertThat(result.get(0).getUsername()).isEqualTo("A");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void findHelloBy(){
+        List<Member> helloBy = memberRepository.findHelloBy();
+        for (Member member : helloBy) {
+            System.out.println("member = " + member);
+        }
+
+
+
+
+
+
 
     }
 

@@ -16,7 +16,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
-    private String userName;
+    private String username;
     private int age;
 
     @ManyToOne(fetch = FetchType.LAZY)
